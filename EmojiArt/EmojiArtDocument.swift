@@ -23,6 +23,11 @@ class EmojiArtDocument: ObservableObject {
         fetchBackgroundImageData()
     }
     
+    func clearDocument() {
+        emojiArt = EmojiArt()
+        backgroundImage = nil
+    }
+    
     @Published private(set) var backgroundImage: UIImage?
     
     var emojis: [EmojiArt.Emoji] {

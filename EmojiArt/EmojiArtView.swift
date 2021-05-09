@@ -23,6 +23,16 @@ struct EmojiArtDocumentView: View {
                 }
             }
             .padding(.horizontal)
+            HStack {
+                Button("Load Background") {
+                    document.setBackgroundURL(URL(string: "https://images.unsplash.com/photo-1567621301854-85b95d32bbf3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1534&q=80"))
+                }
+                Spacer()
+                Button("Clear") {
+                    document.clearDocument()
+                }
+            }
+            .padding()
             GeometryReader {geometry in
                 ZStack {
                     Color.white.overlay(

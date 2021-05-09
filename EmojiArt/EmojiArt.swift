@@ -34,7 +34,6 @@ struct EmojiArt: Codable {
     init?(json: Data?) {
         if json != nil, let newEmojiArt = try? JSONDecoder().decode(EmojiArt.self, from: json!) {
             self = newEmojiArt
-            backgroundURL = URL(string: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/kentucky-bluegrass-sod-royalty-free-image-1586800680.jpg?resize=768:*")
         } else {
             return nil
         }
