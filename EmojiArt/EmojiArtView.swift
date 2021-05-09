@@ -50,9 +50,9 @@ struct EmojiArtDocumentView: View {
                     }
                 }
                 .clipped()
+                .edgesIgnoringSafeArea([.horizontal,.bottom])
                 .gesture(offsetGesture())
                 .gesture(zoomGesture())
-                .edgesIgnoringSafeArea([.horizontal,.bottom])
                 .onDrop(of: ["public.image","public.text"], isTargeted: nil) {providers, location in
                     var location = geometry.convert(location, from: .global)
                     location = CGPoint(x: location.x - geometry.size.width / 2, y: location.y - geometry.size.height / 2)
@@ -108,6 +108,13 @@ struct EmojiArtDocumentView: View {
             }
     }
 
+    private func tapToDeselect() -> some Gesture {
+        TapGesture(count: 1)
+            .onEnded {
+                selectedEmojis = []
+            }
+    }
+    
     private func doubleTapToZoom(in size: CGSize) -> some Gesture {
         TapGesture(count: 2)
             .onEnded{
@@ -115,6 +122,7 @@ struct EmojiArtDocumentView: View {
                     zoomToFit(document.backgroundImage, in: size)
                 }
             }
+            .exclusively(before: tapToDeselect())
     }
     
     private func zoomToFit(_ image: UIImage?, in size: CGSize) {
