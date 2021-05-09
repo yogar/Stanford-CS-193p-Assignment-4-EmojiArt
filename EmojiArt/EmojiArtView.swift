@@ -46,11 +46,7 @@ struct EmojiArtDocumentView: View {
                             .font(animatableWithSize: emoji.fontSize * zoomScale)
                             .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: selectedEmojis.contains(emoji) ? 1 : 0 )
                             .position(self.position(for: emoji, in: geometry.size))
-                            .onTapGesture {
-                               if !selectedEmojis.insert(emoji).inserted {
-                                    selectedEmojis.remove(emoji)
-                                }
-                            }
+                            .gesture(tapToSelect(emoji: emoji))
                     }
                 }
                 .clipped()
@@ -101,6 +97,15 @@ struct EmojiArtDocumentView: View {
                 steadyStatePanOffset = steadyStatePanOffset + finalGestureDragValue.translation / zoomScale
             }
         
+    }
+
+    private func tapToSelect(emoji: EmojiArt.Emoji) -> some Gesture {
+       TapGesture(count: 1)
+            .onEnded {
+                if !selectedEmojis.insert(emoji).inserted {
+                    selectedEmojis.remove(emoji)
+                }
+            }
     }
 
     private func doubleTapToZoom(in size: CGSize) -> some Gesture {
