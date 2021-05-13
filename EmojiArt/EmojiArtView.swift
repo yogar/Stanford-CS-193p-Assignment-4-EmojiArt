@@ -9,18 +9,21 @@ import SwiftUI
 
 struct EmojiArtDocumentView: View {
     @ObservedObject var document = EmojiArtDocument()
-    @State var selectedEmojis: Set<EmojiArt.Emoji> = []
+    @State var selectedEmojis: Set<EmojiArt.Emoji> = [] {
+        didSet {
+            print("\(selectedEmojis)\n")
+        }
+    }
 
     var body: some View {
         VStack {
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(EmojiArtDocument.palette.map { String($0) }, id: \.self) {emoji in
-                        Text(emoji)
-                            .font(Font.system(size: self.defaultEmojiSize))
-                            .onDrag { return NSItemProvider(object: emoji as NSString) }
-                    }
+            HStack {
+                ForEach(EmojiArtDocument.palette.map { String($0) }, id: \.self) {emoji in
+                    Text(emoji)
+                        .font(Font.system(size: self.defaultEmojiSize))
+                        .onDrag { return NSItemProvider(object: emoji as NSString) }
                 }
+                Text("\(zoomScale)")
             }
             .padding(.horizontal)
             HStack {
@@ -29,7 +32,7 @@ struct EmojiArtDocumentView: View {
                 }
                 Spacer()
                 Button("Clear") {
-                    document.clearDocument()
+                    clearDocument()
                 }
             }
             .padding()
@@ -44,10 +47,16 @@ struct EmojiArtDocumentView: View {
                     ForEach(document.emojis) {emoji in
                         Text(emoji.text)
                             .font(animatableWithSize: emoji.fontSize * zoomScale)
-                            .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: selectedEmojis.contains(emoji) ? 1 : 0 )
+                            .border(Color.black, width: selectedEmojis.contains(matching: emoji) ? 1 : 0 )
+                            .scaleEffect(isDetectingLongPress ? 2 : 1)
                             .position(self.position(for: emoji, in: geometry.size))
                             .gesture(tapToSelect(emoji: emoji))
+                            .gesture(selectionOffsetGesture())
+                            .gesture(longTapToRemoveEmojiGesture(emoji: emoji))
                     }
+                    Text("+")
+                        .font(animatableWithSize: defaultEmojiSize * zoomScale)
+                        .position(self.centerOfScreen(in: geometry.size))
                 }
                 .clipped()
                 .edgesIgnoringSafeArea([.horizontal,.bottom])
@@ -74,10 +83,22 @@ struct EmojiArtDocumentView: View {
     private func zoomGesture() -> some Gesture {
         MagnificationGesture()
             .updating($gestureZoomScale) { latestGestureScale, gestureZoomScale, transaction in
-                gestureZoomScale = latestGestureScale
+                if selectedEmojis.isEmpty {
+                    gestureZoomScale = latestGestureScale
+                } else {
+                    for emoji in selectedEmojis {
+                        document.scaleEmoji(emoji, by: gestureZoomScale)
+                    }
+                }
             }
             .onEnded { finalGestureScale in
-                steadyStateZoomScale *= finalGestureScale
+                if selectedEmojis.isEmpty {
+                    steadyStateZoomScale *= finalGestureScale
+                } else {
+                    for emoji in selectedEmojis {
+                        document.scaleEmoji(emoji, by: finalGestureScale)
+                    }
+                }
             }
     }
     
@@ -96,15 +117,34 @@ struct EmojiArtDocumentView: View {
             .onEnded {finalGestureDragValue in
                 steadyStatePanOffset = steadyStatePanOffset + finalGestureDragValue.translation / zoomScale
             }
-        
+    }
+    
+
+    @GestureState private var gestureDragSelectionOffset: CGSize = .zero
+    private func selectionOffsetGesture() -> some Gesture {
+        DragGesture()
+            .updating($gestureDragSelectionOffset) { latestDragValue, gestureDragSelectionOffset,transaction in
+                gestureDragSelectionOffset = latestDragValue.translation / zoomScale
+                print("gestureDragSelectionOffset is \(gestureDragSelectionOffset)")
+                for emoji in selectedEmojis {
+//                    withAnimation() {
+                        document.moveEmoji(emoji, by: gestureDragSelectionOffset)
+//                    }
+                }
+            }
+            .onEnded { finalDragValue in
+                for emoji in selectedEmojis {
+//                    withAnimation() {
+                        document.moveEmoji(emoji, by: finalDragValue.translation / zoomScale)
+//                    }
+                }
+            }
     }
 
     private func tapToSelect(emoji: EmojiArt.Emoji) -> some Gesture {
        TapGesture(count: 1)
             .onEnded {
-                if !selectedEmojis.insert(emoji).inserted {
-                    selectedEmojis.remove(emoji)
-                }
+                selectedEmojis.toggleMatching(emoji)
             }
     }
 
@@ -112,6 +152,14 @@ struct EmojiArtDocumentView: View {
         TapGesture(count: 1)
             .onEnded {
                 selectedEmojis = []
+            }
+    }
+    
+    @GestureState private var isDetectingLongPress = false
+    private func longTapToRemoveEmojiGesture(emoji: EmojiArt.Emoji) -> some Gesture {
+        LongPressGesture()
+            .onEnded {_ in
+                document.removeEmoji(emoji)
             }
     }
     
@@ -129,8 +177,8 @@ struct EmojiArtDocumentView: View {
         if let image = image, image.size.width > 0, image.size.height > 0 {
             let hZoom = size.width / image.size.width
             let vZoom = size.height / image.size.height
-            steadyStatePanOffset = .zero
             steadyStateZoomScale = min(hZoom,vZoom)
+            steadyStatePanOffset = .zero
         }
     }
     
@@ -157,5 +205,19 @@ struct EmojiArtDocumentView: View {
         return found
     }
     
+    private func clearDocument() {
+        document.clearDocument()
+        steadyStatePanOffset = .zero
+        steadyStateZoomScale = 1.0
+        selectedEmojis = []
+    }
     private let defaultEmojiSize: CGFloat = 40
+    
+    private func centerOfScreen(in size: CGSize) -> CGPoint {
+        let center = CGPoint(x: 0, y: 0)
+        var location = CGPoint(x: center.x * zoomScale, y: center.y * zoomScale)
+        location = CGPoint(x: location.x + size.width/2, y: location.y + size.height/2)
+        location = CGPoint(x: location.x + panOffset.width, y: location.y + panOffset.height)
+        return location
+    }
 }

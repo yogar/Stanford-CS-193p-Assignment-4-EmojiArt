@@ -41,15 +41,22 @@ class EmojiArtDocument: ObservableObject {
     }
     
     func moveEmoji(_ emoji: EmojiArt.Emoji, by offset: CGSize) {
-        if let index = emojiArt.emojis.firstIndex(of: emoji) {
+        if let index = emojiArt.emojis.firstIndex(matching: emoji) {
             emojiArt.emojis[index].x += Int(offset.width)
             emojiArt.emojis[index].y += Int(offset.height)
         }
     }
     
     func scaleEmoji(_ emoji: EmojiArt.Emoji, by scale: CGFloat) {
-        if let index = emojiArt.emojis.firstIndex(of: emoji) {
+        if let index = emojiArt.emojis.firstIndex(matching: emoji) {
             emojiArt.emojis[index].size = Int((CGFloat(emojiArt.emojis[index].size) * scale).rounded(.toNearestOrEven))
+        }
+    }
+
+    
+    func removeEmoji(_ emoji: EmojiArt.Emoji) {
+        if let index = emojiArt.emojis.firstIndex(matching: emoji) {
+            emojiArt.emojis.remove(at: index)
         }
     }
     
