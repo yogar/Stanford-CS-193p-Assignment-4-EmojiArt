@@ -28,7 +28,7 @@ struct EmojiArtDocumentView: View {
             .padding(.horizontal)
             HStack {
                 Button("Load Background") {
-                    document.setBackgroundURL(URL(string: "https://images.unsplash.com/photo-1567621301854-85b95d32bbf3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1534&q=80"))
+                    document.backgroundURL = URL(string: "https://images.unsplash.com/photo-1567621301854-85b95d32bbf3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1534&q=80")
                 }
                 Spacer()
                 Button("Clear") {
@@ -44,19 +44,23 @@ struct EmojiArtDocumentView: View {
                             .offset(panOffset)
                     )
                     .gesture(doubleTapToZoom(in: geometry.size))
-                    ForEach(document.emojis) {emoji in
-                        Text(emoji.text)
-                            .font(animatableWithSize: emoji.fontSize * zoomScale)
-                            .border(Color.black, width: selectedEmojis.contains(matching: emoji) ? 1 : 0 )
-                            .scaleEffect(isDetectingLongPress ? 2 : 1)
-                            .position(self.position(for: emoji, in: geometry.size))
-                            .gesture(tapToSelect(emoji: emoji))
-                            .gesture(selectionOffsetGesture())
-                            .gesture(longTapToRemoveEmojiGesture(emoji: emoji))
+                    if self.isLoading {
+                        Image(systemName: "hourglass").imageScale(.large).spinning()
+                    } else {
+                        ForEach(document.emojis) {emoji in
+                            Text(emoji.text)
+                                .font(animatableWithSize: emoji.fontSize * zoomScale)
+                                .border(Color.black, width: selectedEmojis.contains(matching: emoji) ? 1 : 0 )
+                                .scaleEffect(isDetectingLongPress ? 2 : 1)
+                                .position(self.position(for: emoji, in: geometry.size))
+                                .gesture(tapToSelect(emoji: emoji))
+                                .gesture(selectionOffsetGesture())
+                                .gesture(longTapToRemoveEmojiGesture(emoji: emoji))
+                        }
                     }
-                    Text("+")
-                        .font(animatableWithSize: defaultEmojiSize * zoomScale)
-                        .position(self.centerOfScreen(in: geometry.size))
+//                    Text("+")
+//                        .font(animatableWithSize: defaultEmojiSize * zoomScale)
+//                        .position(self.centerOfScreen(in: geometry.size))
                 }
                 .clipped()
                 .edgesIgnoringSafeArea([.horizontal,.bottom])
@@ -71,6 +75,10 @@ struct EmojiArtDocumentView: View {
                 }
             }
         }
+    }
+    
+    var isLoading: Bool {
+        document.backgroundURL != nil && document.backgroundImage == nil
     }
     
     @State private var steadyStateZoomScale: CGFloat = 1.0
@@ -195,7 +203,7 @@ struct EmojiArtDocumentView: View {
     private func drop(providers: [NSItemProvider], at location: CGPoint) -> Bool {
         var found = providers.loadFirstObject(ofType: URL.self) {url in
             print("dropped \(url)")
-            document.setBackgroundURL(url)
+            document.backgroundURL = url
         }
         if !found {
             found = providers.loadObjects(ofType: String.self) {string in
