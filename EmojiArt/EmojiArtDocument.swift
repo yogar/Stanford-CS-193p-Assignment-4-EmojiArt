@@ -6,20 +6,22 @@
 //
 
 import SwiftUI
+import Combine
 
 class EmojiArtDocument: ObservableObject {
     static let palette: String = "🐍🦎🐜🦂🦇"
     
-    @Published private var emojiArt: EmojiArt {
-        didSet {
-            UserDefaults.standard.set(emojiArt.json, forKey: EmojiArtDocument.untitled)
-        }
-    }
+    @Published private var emojiArt: EmojiArt
     
     private static let untitled = "EmojiArtDocument.untitled"
+    private var autosaveCancellable: AnyCancellable?
     
     init() {
         emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: EmojiArtDocument.untitled)) ?? EmojiArt()
+        autosaveCancellable = $emojiArt.sink { emoijArtPublished in
+            print("\(emoijArtPublished.json?.utf8 ?? "nil")")
+            UserDefaults.standard.set(emoijArtPublished.json, forKey: EmojiArtDocument.untitled)
+        }
         fetchBackgroundImageData()
     }
     
