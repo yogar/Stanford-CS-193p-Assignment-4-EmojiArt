@@ -19,7 +19,6 @@ class EmojiArtDocument: ObservableObject {
     init() {
         emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: EmojiArtDocument.untitled)) ?? EmojiArt()
         autosaveCancellable = $emojiArt.sink { emoijArtPublished in
-            print("\(emoijArtPublished.json?.utf8 ?? "nil")")
             UserDefaults.standard.set(emoijArtPublished.json, forKey: EmojiArtDocument.untitled)
         }
         fetchBackgroundImageData()
@@ -72,18 +71,16 @@ class EmojiArtDocument: ObservableObject {
         }
     }
     
+    private var fetchImageCancellable : AnyCancellable?
     private func fetchBackgroundImageData() {
         backgroundImage = nil
         if let url = emojiArt.backgroundURL {
-            DispatchQueue.global(qos: .userInitiated).async {
-                if let imageData = try? Data(contentsOf: url) {
-                    DispatchQueue.main.async {
-                        if url == self.emojiArt.backgroundURL {
-                            self.backgroundImage = UIImage(data: imageData)
-                        }
-                    }
-                }
-            }
+            fetchImageCancellable?.cancel()
+            fetchImageCancellable = URLSession.shared.dataTaskPublisher(for: url)
+                .map { data, URLResponse in UIImage(data:data)}
+                .receive(on: DispatchQueue.main)
+                .replaceError(with: nil)
+                .assign(to: \EmojiArtDocument.backgroundImage, on: self)
         }
     }
 }
