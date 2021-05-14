@@ -14,18 +14,23 @@ struct EmojiArtDocumentView: View {
             print("\(selectedEmojis)\n")
         }
     }
+    @State private var chosenPallette: String = ""
 
     var body: some View {
-        VStack {
-            HStack {
-                ForEach(EmojiArtDocument.palette.map { String($0) }, id: \.self) {emoji in
-                    Text(emoji)
-                        .font(Font.system(size: self.defaultEmojiSize))
-                        .onDrag { return NSItemProvider(object: emoji as NSString) }
+        VStack(alignment: .leading) {
+            PalletteChooser(document: document, chosenPalette: $chosenPallette)
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(chosenPallette.map { String($0) }, id: \.self) {emoji in
+                        Text(emoji)
+                            .font(Font.system(size: self.defaultEmojiSize))
+                            .onDrag { return NSItemProvider(object: emoji as NSString) }
+                    }
                 }
-                Text("\(zoomScale)")
             }
-            .padding(.horizontal)
+            .onAppear {
+                chosenPallette = document.defaultPalette
+            }
             HStack {
                 Button("Load Background") {
                     document.backgroundURL = URL(string: "https://images.unsplash.com/photo-1567621301854-85b95d32bbf3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1534&q=80")
