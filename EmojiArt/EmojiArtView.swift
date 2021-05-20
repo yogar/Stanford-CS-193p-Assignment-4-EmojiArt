@@ -8,13 +8,18 @@
 import SwiftUI
 
 struct EmojiArtDocumentView: View {
-    @ObservedObject var document = EmojiArtDocument()
+    @ObservedObject var document: EmojiArtDocument
     @State var selectedEmojis: Set<EmojiArt.Emoji> = [] {
         didSet {
             print("\(selectedEmojis)\n")
         }
     }
     @State private var chosenPallette: String = ""
+    
+    init(document: EmojiArtDocument) {
+        self.document = document
+        _chosenPallette = State(wrappedValue: self.document.defaultPalette)
+    }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -27,9 +32,6 @@ struct EmojiArtDocumentView: View {
                             .onDrag { return NSItemProvider(object: emoji as NSString) }
                     }
                 }
-            }
-            .onAppear {
-                chosenPallette = document.defaultPalette
             }
             HStack {
                 Button("Load Background") {

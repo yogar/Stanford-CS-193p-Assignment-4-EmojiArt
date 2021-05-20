@@ -33,7 +33,7 @@ extension EmojiArtDocument
 
     var sortedPalettes: [String] {
         paletteNames.keys.sorted(by: { paletteNames[$0]! < paletteNames[$1]! })
-    }
+    } 
 
     var defaultPalette: String {
         sortedPalettes.first ?? "⚠️"

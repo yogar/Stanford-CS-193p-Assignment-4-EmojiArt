@@ -14,6 +14,9 @@
 		5A1C974526453FA40098D7E2 /* EmojiArtDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1C974426453FA40098D7E2 /* EmojiArtDocument.swift */; };
 		5A1C9749264546F40098D7E2 /* EmojiArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1C9748264546F40098D7E2 /* EmojiArt.swift */; };
 		5A1C974C26454AD20098D7E2 /* EmojiArtExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1C974B26454AD20098D7E2 /* EmojiArtExtensions.swift */; };
+		5A3816222655432D009F4122 /* GridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3816202655432D009F4122 /* GridLayout.swift */; };
+		5A3816232655432D009F4122 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3816212655432D009F4122 /* Grid.swift */; };
+		5A38162626555821009F4122 /* EmojiArtDocumentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A38162526555821009F4122 /* EmojiArtDocumentStore.swift */; };
 		5A8BFDD0264E9DB300A8F0F2 /* Spinning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8BFDCF264E9DB300A8F0F2 /* Spinning.swift */; };
 		5A8BFDD4264EF85D00A8F0F2 /* PalletteChooser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8BFDD3264EF85C00A8F0F2 /* PalletteChooser.swift */; };
 		5A8BFDD7264EFC1100A8F0F2 /* EmojiArtDocumentPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8BFDD6264EFC1100A8F0F2 /* EmojiArtDocumentPalette.swift */; };
@@ -31,6 +34,9 @@
 		5A1C974426453FA40098D7E2 /* EmojiArtDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiArtDocument.swift; sourceTree = "<group>"; };
 		5A1C9748264546F40098D7E2 /* EmojiArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiArt.swift; sourceTree = "<group>"; };
 		5A1C974B26454AD20098D7E2 /* EmojiArtExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmojiArtExtensions.swift; sourceTree = "<group>"; };
+		5A3816202655432D009F4122 /* GridLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridLayout.swift; sourceTree = "<group>"; };
+		5A3816212655432D009F4122 /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
+		5A38162526555821009F4122 /* EmojiArtDocumentStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmojiArtDocumentStore.swift; sourceTree = "<group>"; };
 		5A8BFDCF264E9DB300A8F0F2 /* Spinning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spinning.swift; sourceTree = "<group>"; };
 		5A8BFDD3264EF85C00A8F0F2 /* PalletteChooser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PalletteChooser.swift; sourceTree = "<group>"; };
 		5A8BFDD6264EFC1100A8F0F2 /* EmojiArtDocumentPalette.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmojiArtDocumentPalette.swift; sourceTree = "<group>"; };
@@ -77,7 +83,10 @@
 				5A1C9748264546F40098D7E2 /* EmojiArt.swift */,
 				5A1C974B26454AD20098D7E2 /* EmojiArtExtensions.swift */,
 				5A1C974426453FA40098D7E2 /* EmojiArtDocument.swift */,
+				5A3816212655432D009F4122 /* Grid.swift */,
+				5A3816202655432D009F4122 /* GridLayout.swift */,
 				5A8BFDD3264EF85C00A8F0F2 /* PalletteChooser.swift */,
+				5A38162526555821009F4122 /* EmojiArtDocumentStore.swift */,
 				5A1C973826453F7A0098D7E2 /* Assets.xcassets */,
 				5A1C973D26453F7A0098D7E2 /* Info.plist */,
 				5A1C973A26453F7A0098D7E2 /* Preview Content */,
@@ -171,7 +180,10 @@
 				5A1C974526453FA40098D7E2 /* EmojiArtDocument.swift in Sources */,
 				5A1C973526453F760098D7E2 /* EmojiArtApp.swift in Sources */,
 				5A8BFDD4264EF85D00A8F0F2 /* PalletteChooser.swift in Sources */,
+				5A38162626555821009F4122 /* EmojiArtDocumentStore.swift in Sources */,
 				5A8BFDD0264E9DB300A8F0F2 /* Spinning.swift in Sources */,
+				5A3816222655432D009F4122 /* GridLayout.swift in Sources */,
+				5A3816232655432D009F4122 /* Grid.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
