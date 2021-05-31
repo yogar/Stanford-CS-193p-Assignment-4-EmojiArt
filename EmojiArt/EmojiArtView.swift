@@ -33,15 +33,6 @@ struct EmojiArtDocumentView: View {
                     }
                 }
             }
-            HStack {
-                Button("Load Background") {
-                    document.backgroundURL = URL(string: "https://images.unsplash.com/photo-1567621301854-85b95d32bbf3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1534&q=80")
-                }
-                Spacer()
-                Button("Clear") {
-                    clearDocument()
-                }
-            }
             .padding()
             GeometryReader {geometry in
                 ZStack {
@@ -85,6 +76,20 @@ struct EmojiArtDocumentView: View {
                 }
             }
         }
+        .navigationBarItems(trailing:
+            HStack {
+                Button(action: {
+                    if let url = UIPasteboard.general.url {
+                        document.backgroundURL = url
+                    }
+                }, label: {
+                    Image(systemName: "doc.on.clipboard")
+                })
+                Button("Clear") {
+                    clearDocument()
+                }
+            }
+        )
     }
     
     var isLoading: Bool {
@@ -192,7 +197,7 @@ struct EmojiArtDocumentView: View {
     }
     
     private func zoomToFit(_ image: UIImage?, in size: CGSize) {
-        if let image = image, image.size.width > 0, image.size.height > 0 {
+        if let image = image, image.size.width > 0, image.size.height > 0, size.height > 0, size.width > 0 {
             let hZoom = size.width / image.size.width
             let vZoom = size.height / image.size.height
             steadyStateZoomScale = min(hZoom,vZoom)
