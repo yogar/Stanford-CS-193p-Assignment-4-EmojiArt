@@ -9,8 +9,6 @@ import SwiftUI
 import Combine
 
 class EmojiArtDocument: ObservableObject, Hashable, Identifiable {
-    
-    
     static func == (lhs: EmojiArtDocument, rhs: EmojiArtDocument) -> Bool {
         lhs.id == rhs.id
     }
@@ -38,10 +36,14 @@ class EmojiArtDocument: ObservableObject, Hashable, Identifiable {
     
     func clearDocument() {
         emojiArt = EmojiArt()
+        steadyStatePanOffset = .zero
+        steadyStateZoomScale = 1.0
         backgroundImage = nil
     }
     
     @Published private(set) var backgroundImage: UIImage?
+    @Published var steadyStateZoomScale: CGFloat = 1.0
+    @Published var steadyStatePanOffset: CGSize = .zero
     
     var emojis: [EmojiArt.Emoji] {
         return emojiArt.emojis
