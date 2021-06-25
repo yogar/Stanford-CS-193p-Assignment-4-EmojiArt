@@ -22,8 +22,8 @@ extension Collection where Element: Identifiable {
 
 extension Set where Element: Identifiable {
     mutating func toggleMatching(_ element: Element) {
-        if let index = self.firstIndex(matching: element) {
-            self.remove(at: index)
+        if contains(matching: element) {
+            self.remove(element)
         } else {
             self.insert(element)
         }

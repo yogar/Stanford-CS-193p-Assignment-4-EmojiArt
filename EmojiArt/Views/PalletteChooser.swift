@@ -61,7 +61,6 @@ struct PaletteEditor: View {
                     }, label: { Text("Done") }).padding()
                 }
             }
-
             Divider()
             Form {
                 Section {

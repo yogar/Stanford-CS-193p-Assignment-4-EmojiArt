@@ -10,8 +10,8 @@ import SwiftUI
 struct EmojiArtDocumentView: View {
     @ObservedObject var document: EmojiArtDocument
     @State var selectedEmojis: Set<EmojiArt.Emoji> = [] {
-        didSet {
-            print("\(selectedEmojis)\n")
+        willSet {
+            print("\(newValue)\n")
         }
     }
     @State private var chosenPallette: String = ""
@@ -128,6 +128,7 @@ struct EmojiArtDocumentView: View {
                     gestureZoomScale = latestGestureScale
                 } else {
                     for emoji in selectedEmojis {
+                        gestureZoomScale = latestGestureScale
                         document.scaleEmoji(emoji, by: gestureZoomScale)
                     }
                 }
@@ -165,18 +166,15 @@ struct EmojiArtDocumentView: View {
         DragGesture()
             .updating($gestureDragSelectionOffset) { latestDragValue, gestureDragSelectionOffset,transaction in
                 gestureDragSelectionOffset = latestDragValue.translation / zoomScale
-                print("gestureDragSelectionOffset is \(gestureDragSelectionOffset)")
                 for emoji in selectedEmojis {
-//                    withAnimation() {
-                        document.moveEmoji(emoji, by: gestureDragSelectionOffset)
-//                    }
+                    document.moveEmoji(emoji, by: gestureDragSelectionOffset)
                 }
             }
             .onEnded { finalDragValue in
                 for emoji in selectedEmojis {
-//                    withAnimation() {
+                    withAnimation() {
                         document.moveEmoji(emoji, by: finalDragValue.translation / zoomScale)
-//                    }
+                    }
                 }
             }
     }
@@ -195,9 +193,17 @@ struct EmojiArtDocumentView: View {
             }
     }
     
-    @GestureState private var isDetectingLongPress = false
+    @GestureState private var isDetectingLongPress = false {
+        willSet {
+            print(newValue)
+        }
+    }
+    
     private func longTapToRemoveEmojiGesture(emoji: EmojiArt.Emoji) -> some Gesture {
-        LongPressGesture()
+        LongPressGesture(minimumDuration: 1)
+            .updating($isDetectingLongPress) { currentState, gestureState, transaction in
+                gestureState = currentState
+            }
             .onEnded {_ in
                 document.removeEmoji(emoji)
             }

@@ -32,6 +32,7 @@ class EmojiArtDocument: ObservableObject, Hashable, Identifiable {
             UserDefaults.standard.set(emoijArtPublished.json, forKey: defaultsKey)
         }
         fetchBackgroundImageData()
+        print("document \(self.id)")
     }
     
     func clearDocument() {
